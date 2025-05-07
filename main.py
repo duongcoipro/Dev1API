@@ -3,6 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import os
 from datetime import datetime
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+import glob
+import json
 
 app = FastAPI()
 app.add_middleware(
@@ -12,6 +16,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/images", StaticFiles(directory="uploads"), name="images")
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -32,3 +38,15 @@ async def upload_file(
         f.write(f"Họ tên: {name}\nEmail: {email}\nMô tả: {description}\nHình ảnh: {filename}\n")
 
     return JSONResponse(content={"message": "Thông tin đã được gửi thành công!"})
+
+@app.get("/list")
+def list_uploads():
+    results = []
+    for txt_file in glob.glob("uploads/*_info.txt"):
+        with open(txt_file, "r", encoding="utf-8") as f:
+            lines = f.read().splitlines()
+            info = {line.split(": ", 1)[0]: line.split(": ", 1)[1] for line in lines if ": " in line}
+            image_file = info.get("Hình ảnh", "")
+            info["image_url"] = f"/images/{image_file}"
+            results.append(info)
+    return results
