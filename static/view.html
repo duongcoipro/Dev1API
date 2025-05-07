@@ -2,19 +2,32 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Danh sách thông tin đã gửi</title>
+  <title>Danh sách đã gửi</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { font-family: Arial; padding: 20px; }
-    .card {
-      border: 1px solid #ccc; padding: 10px; margin: 10px 0;
-      border-radius: 8px; display: flex; align-items: center;
+    body {
+      background: #f8f9fa;
+      padding: 40px;
     }
-    .card img { width: 150px; height: auto; margin-right: 10px; }
+    .card {
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .card img {
+      max-width: 200px;
+      border-radius: 10px;
+    }
+    .card-body {
+      padding-left: 20px;
+    }
   </style>
 </head>
 <body>
-  <h2>Danh sách thông tin đã gửi</h2>
-  <div id="list"></div>
+  <div class="container">
+    <h2 class="text-center mb-4">Danh sách thông tin đã gửi</h2>
+    <div id="list" class="row"></div>
+  </div>
 
   <script>
     async function loadData() {
@@ -22,23 +35,27 @@
       const data = await res.json();
       const container = document.getElementById("list");
 
+      if (data.length === 0) {
+        container.innerHTML = "<p class='text-center'>Chưa có dữ liệu.</p>";
+        return;
+      }
+
       data.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "card";
+        const col = document.createElement("div");
+        col.className = "col-md-6";
 
-        const img = document.createElement("img");
-        img.src = `https://dev1api.onrender.com${item.image_url}`;
-
-        const text = document.createElement("div");
-        text.innerHTML = `
-          <strong>Họ tên:</strong> ${item["Họ tên"]}<br>
-          <strong>Email:</strong> ${item["Email"]}<br>
-          <strong>Mô tả:</strong> ${item["Mô tả"]}<br>
+        col.innerHTML = `
+          <div class="card p-3 d-flex flex-row align-items-center">
+            <img src="https://dev1api.onrender.com${item.image_url}" alt="Hình ảnh">
+            <div class="card-body">
+              <h5 class="card-title">${item["Họ tên"]}</h5>
+              <p class="card-text"><strong>Email:</strong> ${item["Email"]}</p>
+              <p class="card-text"><strong>Mô tả:</strong> ${item["Mô tả"]}</p>
+            </div>
+          </div>
         `;
 
-        card.appendChild(img);
-        card.appendChild(text);
-        container.appendChild(card);
+        container.appendChild(col);
       });
     }
 
