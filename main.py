@@ -16,7 +16,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/images", StaticFiles(directory="uploads"), name="images")
 
 UPLOAD_DIR = "uploads"
