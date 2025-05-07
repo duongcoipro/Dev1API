@@ -36,8 +36,7 @@ async def upload_file(
     info_path = os.path.join(UPLOAD_DIR, f"{filename}_info.txt")
     with open(info_path, "w", encoding="utf-8") as f:
         f.write(f"Họ tên: {name}\nEmail: {email}\nMô tả: {description}\nHình ảnh: {filename}\n")
-
-    return JSONResponse(content={"message": "Thông tin đã được gửi thành công!"})
+    return "Thông tin đã được tải lên thành công!"
 
 @app.get("/list")
 def list_uploads():
